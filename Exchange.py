@@ -58,6 +58,17 @@ def interval_to_milliseconds(interval):
     return ms
 
 @staticmethod
+def get_exchange_symbols():
+    # create the Binance client, no need for api key
+    client = Client("", "")
+
+    exchange_info = client.get_exchange_info()
+    for s in exchange_info['symbols']:
+        if 'EUR' in s['symbol']:
+            print(s['symbol'])
+
+
+@staticmethod
 def get_historical_klines(symbol, interval, start_str, end_str=None) -> list[list]:
     """Get Historical Klines from Binance
 
@@ -108,6 +119,8 @@ def get_historical_klines(symbol, interval, start_str, end_str=None) -> list[lis
             startTime=start_ts,
             endTime=end_ts,
         )
+
+        print(temp_data)
 
         # handle the case where our start date is before the symbol pair listed on Binance
         if not symbol_existed and len(temp_data):

@@ -6,10 +6,12 @@ import json
 from Kline import Kline
 
 
-symbol = "ETHBTC"
+symbol = "BTCUSDT"
 start = "1 Dec, 2017"
 end = "1 Jan, 2018"
 interval = Client.KLINE_INTERVAL_30MINUTE
+
+Exchange.get_exchange_symbols()
 
 klines = Exchange.get_historical_klines(symbol, interval, start, end)
 
