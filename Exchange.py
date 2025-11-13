@@ -65,7 +65,8 @@ def get_exchange_symbols():
     exchange_info = client.get_exchange_info()
     for s in exchange_info['symbols']:
         if 'EUR' in s['symbol']:
-            print(s['symbol'])
+            break
+            #print(s['symbol'])
 
 
 @staticmethod
@@ -120,7 +121,7 @@ def get_historical_klines(symbol, interval, start_str, end_str=None) -> list[lis
             endTime=end_ts,
         )
 
-        print(temp_data)
+        #print(temp_data)
 
         # handle the case where our start date is before the symbol pair listed on Binance
         if not symbol_existed and len(temp_data):

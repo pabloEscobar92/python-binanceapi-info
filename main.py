@@ -8,7 +8,7 @@ from Kline import Kline
 
 symbol = "BTCUSDT"
 start = "1 Dec, 2017"
-end = "1 Jan, 2018"
+end = "1 Jan, 2019"
 interval = Client.KLINE_INTERVAL_30MINUTE
 
 Exchange.get_exchange_symbols()
