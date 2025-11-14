@@ -7,20 +7,24 @@ class Storage:
     @staticmethod
     def save_to_json(data, symbol, interval, start, end):
         """
-        Guarda los datos en un archivo JSON dentro del directorio 'output'.
-        
-        :param data: Lista de datos a guardar.
+        Escribe directamente nuevos datos en un archivo JSON distinto por llamada
+        (cada iteración del bucle generará un fichero nuevo). Si el archivo no
+        existe, lo crea.
+
+        :param data: Lista de datos a escribir.
         :param symbol: Símbolo del par de trading (e.g., BTCUSDT).
         :param interval: Intervalo de tiempo (e.g., 30m).
-        :param start: Fecha de inicio en formato legible (e.g., '1 Ene, 2024'.
-        :param end: Fecha de fin en formato legible (e.g., '1 Ene, 2025'.
+        :param start: Fecha de inicio en formato legible (e.g., '1 Ene, 2024').
+        :param end: Fecha de fin en formato legible (e.g., '1 Ene, 2025').
         """
         # Convertir las fechas de inicio y fin a un formato legible
         start_readable = datetime.strptime(start, "%d %b, %Y").strftime("%Y-%m-%d")
         end_readable = datetime.strptime(end, "%d %b, %Y").strftime("%Y-%m-%d")
 
         # Crear el nombre del archivo
-        filename = "Binance_{}_{}_{}-{}.json".format(symbol, interval, start_readable, end_readable)
+        # Añadimos un sufijo con timestamp UTC para que cada llamada cree un fichero único
+        timestamp_suffix = datetime.utcnow().strftime("%Y%m%dT%H%M%S%f")
+        filename = "Binance_{}_{}_{}-{}_{}.json".format(symbol, interval, start_readable, end_readable, timestamp_suffix)
 
         # Crear el directorio 'output' si no existe
         output_dir = "output"
