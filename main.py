@@ -1,35 +1,32 @@
-
 from binance.client import Client
 import Exchange
 import json
-
+from datetime import datetime
+import locale
 from Kline import Kline
-
+from Storage import Storage
 
 symbol = "BTCUSDT"
-start = "1 Dec, 2017"
-end = "1 Jan, 2019"
+start = "1 Jan, 2024"
+end = "1 Jan, 2025"
 interval = Client.KLINE_INTERVAL_30MINUTE
 
 Exchange.get_exchange_symbols()
 
 klines = Exchange.get_historical_klines(symbol, interval, start, end)
 
-#init Klines
-temp_klines: list[Kline] = []
+'''
+# Convertir cada array en un Kline para escribir cada kline como un dict
+temp_klines: list[Kline] = [Kline(*array) for array in klines]
 
-# Convierto cada array en un Kline para escribir cada kline como un dict
-for array in klines:
-    temp_klines.append(Kline(*array))
-
-# open a file with filename including symbol, interval and start and end converted to milliseconds
-with open(
-    "Binance_{}_{}_{}-{}.json".format(
-        symbol, interval, Exchange.date_to_milliseconds(start), Exchange.date_to_milliseconds(end)
-    ),
-    "w",  # set file write mode
-) as f:
-    f.write(json.dumps([k.to_dict() for k in temp_klines], indent=2))
-    
+# Guardar los datos en un archivo JSON usando la clase Storage
+Storage.save_to_json(
+    data=[k.to_dict() for k in temp_klines],
+    symbol=symbol,
+    interval=interval,
+    start=start,
+    end=end
+)
+'''
 
 

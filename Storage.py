@@ -1,30 +1,98 @@
 import pandas as pd
+import json
+from datetime import datetime
+import os
 
 class Storage:
-    """ Almacena los datos OHLC del par y el estado de las opreaciones"""
+    @staticmethod
+    def save_to_json(data, symbol, interval, start, end):
+        """
+        Guarda los datos en un archivo JSON dentro del directorio 'output'.
+        
+        :param data: Lista de datos a guardar.
+        :param symbol: Símbolo del par de trading (e.g., BTCUSDT).
+        :param interval: Intervalo de tiempo (e.g., 30m).
+        :param start: Fecha de inicio en formato legible (e.g., '1 Ene, 2024'.
+        :param end: Fecha de fin en formato legible (e.g., '1 Ene, 2025'.
+        """
+        # Convertir las fechas de inicio y fin a un formato legible
+        start_readable = datetime.strptime(start, "%d %b, %Y").strftime("%Y-%m-%d")
+        end_readable = datetime.strptime(end, "%d %b, %Y").strftime("%Y-%m-%d")
 
-    def __init__(self):
-        self.status: str = 'NONE' # ['LONG', 'SHORT', 'NONE']
-        self.ohcl_data: pd.DataFrame = pd.DataFrame(columns=['ts',
-                                                             'open',
-                                                             'close',
-                                                             'low',
-                                                             'high',
-                                                             'volume'])
-        self.max_data: int = 300
-    
-    def push(self, ohcl_list: List[dict], frequency: str):
-        """ Almacena uno o varios datos obtenidos del exchange"""
-        pass
+        # Crear el nombre del archivo
+        filename = "Binance_{}_{}_{}-{}.json".format(symbol, interval, start_readable, end_readable)
 
-    def pop(self):
-        """Quita datos antiguos cuando se alcanza el limite max_data"""
-        pass
+        # Crear el directorio 'output' si no existe
+        output_dir = "output"
+        os.makedirs(output_dir, exist_ok=True)
 
-    def get(self, idx: int= -1) -> pd.DataFrame:
-        return self.ohcl_data.loc[self.ohcl_data.index[idx]]
-    
-    def _check_ts(self, df: pd.DataFrame, interval: str) -> None:
-        """Comprueba la frecuencia de los timstamp de un DataFrame, que
-        no esta repetido y que no falta ningún valor, Errores como excepciones"""
-        pass
+        # Ruta completa del archivo
+        filepath = os.path.join(output_dir, filename)
+
+        # Guardar los datos en el archivo JSON
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        print(f"Datos guardados en {filepath}")
+
+    @staticmethod
+    def append_to_json(data, symbol, interval, start, end):
+        """
+        Escribe directamente nuevos datos en un archivo JSON dentro del directorio 'output'. Si el archivo no existe, lo crea.
+
+        :param data: Lista de datos a escribir.
+        :param symbol: Símbolo del par de trading (e.g., BTCUSDT).
+        :param interval: Intervalo de tiempo (e.g., 30m).
+        :param start: Fecha de inicio en formato legible (e.g., '1 Ene, 2024'.
+        :param end: Fecha de fin en formato legible (e.g., '1 Ene, 2025'.
+        """
+        # Convertir las fechas de inicio y fin a un formato legible
+        start_readable = datetime.strptime(start, "%d %b, %Y").strftime("%Y-%m-%d")
+        end_readable = datetime.strptime(end, "%d %b, %Y").strftime("%Y-%m-%d")
+
+        # Crear el nombre del archivo
+        filename = "Binance_{}_{}_{}-{}.json".format(symbol, interval, start_readable, end_readable)
+
+        # Crear el directorio 'output' si no existe
+        output_dir = "output"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Ruta completa del archivo
+        filepath = os.path.join(output_dir, filename)
+
+        # Guardar los nuevos datos en el archivo JSON
+        with open(filepath, "w", encoding="utf-8") as f:
+            json.dump(data, f, ensure_ascii=False, indent=2)
+
+        print(f"Nuevos datos escritos en {filepath}")
+
+    @staticmethod
+    def create_json_file(symbol, interval, start, end):
+        """
+        Crea un archivo JSON vacío en el directorio 'output'.
+
+        :param symbol: Símbolo del par de trading (e.g., BTCUSDT).
+        :param interval: Intervalo de tiempo (e.g., 30m).
+        :param start: Fecha de inicio en formato legible (e.g., '1 Ene, 2024'.
+        :param end: Fecha de fin en formato legible (e.g., '1 Ene, 2025'.
+        """
+        # Convertir las fechas de inicio y fin a un formato legible
+        start_readable = datetime.strptime(start, "%d %b, %Y").strftime("%Y-%m-%d")
+        end_readable = datetime.strptime(end, "%d %b, %Y").strftime("%Y-%m-%d")
+
+        # Crear el nombre del archivo
+        filename = "Binance_{}_{}_{}-{}.json".format(symbol, interval, start_readable, end_readable)
+
+        # Crear el directorio 'output' si no existe
+        output_dir = "output"
+        os.makedirs(output_dir, exist_ok=True)
+
+        # Ruta completa del archivo
+        filepath = os.path.join(output_dir, filename)
+
+        # Crear un archivo JSON vacío si no existe
+        if not os.path.exists(filepath):
+            with open(filepath, "w", encoding="utf-8") as f:
+                json.dump([], f, ensure_ascii=False, indent=2)
+
+        return filepath

@@ -1,9 +1,12 @@
 import time
 import dateparser
 import pytz
+import os
+import json
 
 from datetime import datetime
 from binance.client import Client
+from Storage import Storage
 
 
 
@@ -14,7 +17,7 @@ class Exchange:
 def date_to_milliseconds(date_str):
     """Convert UTC date to milliseconds
 
-    If using offset strings add "UTC" to date string e.g. "now UTC", "11 hours ago UTC"
+    If using offset strings add "UTC" to date string e.g. "now UTC", "11 hours ago UTC UTC"
 
     See dateparse docs for formats http://dateparser.readthedocs.io/en/latest/
 
@@ -108,8 +111,11 @@ def get_historical_klines(symbol, interval, start_str, end_str=None) -> list[lis
     idx = 0
     # it can be difficult to know when a symbol was listed on Binance so allow start time to be before list date
     symbol_existed = False
+    # Crear el archivo JSON utilizando Storage
+    filepath = Storage.create_json_file(symbol, interval, start_str, end_str)
+
     while True:
-        #init temp_data
+        # init temp_data
         temp_data: list[dict] = []
 
         # fetch the klines from start_ts up to max 500 entries or the end_ts if set
@@ -121,15 +127,16 @@ def get_historical_klines(symbol, interval, start_str, end_str=None) -> list[lis
             endTime=end_ts,
         )
 
-        #print(temp_data)
-
         # handle the case where our start date is before the symbol pair listed on Binance
         if not symbol_existed and len(temp_data):
             symbol_existed = True
 
         if symbol_existed:
-            # append this loops data to our output data
+            # append this loop's data to our output data
             output_data += temp_data
+
+            # Guardar los datos de esta iteración en el archivo JSON usando Storage
+            Storage.append_to_json(temp_data, symbol, interval, start_str, end_str)
 
             # update our start timestamp using the last value in the array and add the interval timeframe
             start_ts = temp_data[len(temp_data) - 1][0] + timeframe
