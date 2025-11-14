@@ -112,7 +112,7 @@ def get_historical_klines(symbol, interval, start_str, end_str=None) -> list[lis
     # it can be difficult to know when a symbol was listed on Binance so allow start time to be before list date
     symbol_existed = False
     # Crear el archivo JSON utilizando Storage
-    filepath = Storage.create_json_file(symbol, interval, start_str, end_str)
+    filepath = Storage.create_json_file(symbol, interval, start_ts, end_ts)
 
     while True:
         # init temp_data
@@ -136,7 +136,7 @@ def get_historical_klines(symbol, interval, start_str, end_str=None) -> list[lis
             output_data += temp_data
 
             # Guardar los datos de esta iteración en el archivo JSON usando Storage
-            Storage.append_to_json(temp_data, symbol, interval, start_str, end_str)
+            Storage.save_to_json(temp_data, symbol, interval, start_ts, end_ts)
 
             # update our start timestamp using the last value in the array and add the interval timeframe
             start_ts = temp_data[len(temp_data) - 1][0] + timeframe
